@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Program Kredit Rumah</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: antiquewhite;
+            text-align: center;
+        }
+        
+        h1 {
+            background-color: skyblue;
+            color: black;
+            padding: 50px;
+            border-radius: 15px;
+            margin-left: 50px;
+            margin-right: 50px;
+            font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        #input {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+            margin-left: 50px;
+            margin-right: 50px;
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color:skyblue;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        button:hover {
+            background-color:blue;
+        }
+        
+        #output {
+            background-color: rgb(101, 167, 194);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 20px;
+            margin-right: 50px;
+            margin-left: 50px;
+            padding-bottom: 30px;
+            color: blue;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        table, th, td {
+            border: 1px solid #ffffff;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border-radius: 6px;
+        }
+        td{
+            background-color:white ;
+        }
+        th {
+            background-color: skyblue;
+            color: black;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        h2{
+            color: white;
+        }
+        p{
+            color: white;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Program Kredit Rumah</h1>
+    <div id="input">
+            <!-- Input Data -->
+                <label for="uangMukaInput">Uang Muka (Rp):</label>
+                <input type="text" id="uangMukaInput"><br><br>
+                <label for="lamaKreditInput">Lama Kredit (bulan):</label>
+                <input type="text" id="lamaKreditInput"><br><br>
+                <label for="tipeRumahInput">Tipe Rumah:</label>
+                <label><input type="checkbox" id="alamandaCheckbox"> Alamanda</label>
+                <label><input type="checkbox" id="mawarCheckbox"> Mawar</label><br><br>
+            <button onclick="hitungKredit()">Hitung</button>
+            <button onclick="resetForm()">Reset</button>
+        
+    </div>
+    
+    <div id="output">
+        <!-- Output -->
+    </div>
+
+    <script>
+        // Input data
+        const tipeRumah = ["Alamanda", "Mawar"];
+        const hargaRumah = [120000000, 130000000];
+        
+        function hitungKredit() {
+            // Mendapatkan nilai dari input
+            const uangMukaInput = parseFloat(document.getElementById("uangMukaInput").value);
+            const lamaKreditInput = parseInt(document.getElementById("lamaKreditInput").value);
+            const alamandaCheckbox = document.getElementById("alamandaCheckbox").checked;
+            const mawarCheckbox = document.getElementById("mawarCheckbox").checked;
+            
+            if (isNaN(uangMukaInput)) {
+                alert("Uang Muka tidak valid. Gunakan angka.");
+                return;
+            }
+            
+            if (isNaN(lamaKreditInput)) {
+                alert("Lama Kredit tidak valid. Gunakan angka.");
+                return;
+            }
+            
+            function formatToRupiah(angka) {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(angka);
+            }
+            
+            const outputDiv = document.getElementById("output");
+            outputDiv.innerHTML = "";
+
+            // Membuat tabel
+            const table = document.createElement("table");
+            table.innerHTML = `
+                <tr>
+                    <th>Type Rumah</th>
+                    <th>Harga Rumah</th>
+                    <th>Uang Muka</th>
+                    <th>Lama Kredit (bulan)</th>
+                    <th>Angsuran</th>
+                    <th>Sisa Kredit</th>
+                </tr>
+            `;
+            
+            for (let i = 0; i < tipeRumah.length; i++) {
+                if ((alamandaCheckbox && tipeRumah[i] === "Alamanda") || (mawarCheckbox && tipeRumah[i] === "Mawar")) {
+                    const type = tipeRumah[i];
+                    const harga = hargaRumah[i];
+                    const uangMukaRumah = uangMukaInput || 0;
+                    let sisaKredit = harga - uangMukaRumah;
+                    const lamaKreditRumah = lamaKreditInput || 0;
+                    
+                    outputDiv.innerHTML += `<p>Type Rumah: ${type}</p>`;
+                    outputDiv.innerHTML += `<p>Harga Rumah: ${formatToRupiah(harga)}</p>`;
+                    outputDiv.innerHTML += `<p>Uang Muka: ${formatToRupiah(uangMukaRumah)}</p>`;
+                    outputDiv.innerHTML += `<p>Lama Kredit: ${lamaKreditRumah} bulan</p>`;
+                    outputDiv.innerHTML += `<h2>Angsuran Bulanan dan Sisa Kredit</h2>`;
+                    
+                    for (let bulan = 1; bulan <= lamaKreditRumah; bulan++) {
+                        const angsuran = sisaKredit / lamaKreditRumah;
+                        sisaKredit -= angsuran;
+                        
+                        table.innerHTML += `
+                            <tr>
+                                <td>${type}</td>
+                                <td>${formatToRupiah(harga)}</td>
+                                <td>${formatToRupiah(uangMukaRumah)}</td>
+                                <td>${lamaKreditRumah}</td>
+                                <td>${formatToRupiah(angsuran)}</td>
+                                <td>${formatToRupiah(sisaKredit)}</td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
+            outputDiv.appendChild(table);
+        }
+    </script>
+    <script>
+
+        function resetForm() {
+            document.getElementById("uangMukaInput").value = "";
+            document.getElementById("lamaKreditInput").value = "";
+            document.getElementById("alamandaCheckbox").checked = false;
+            document.getElementById("mawarCheckbox").checked = false;
+            document.getElementById("output").innerHTML = "";
+        }
+    </script>
+</body>
+</html>
